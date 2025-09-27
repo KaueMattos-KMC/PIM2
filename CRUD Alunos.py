@@ -9,12 +9,11 @@ def carregar_alunos():
     if os.path.exists(ARQUIVO_alunos):
         with open(ARQUIVO_alunos, 'r', encoding='utf-8') as arquivo:
             for linha in arquivo:
-                cpf, nome, telefone, email, endereco = linha.strip().split(';')
+                cpf, nome, telefone, email = linha.strip().split(';')
                 alunos[cpf] = {
                     'nome': nome,
                     'telefone': telefone,
-                    'email': email,
-                    'endereco': endereco
+                    'email': email
                 }
     return alunos
 
@@ -22,7 +21,7 @@ def carregar_alunos():
 def salvar_alunos(alunos):
     with open(ARQUIVO_alunos, 'w', encoding='utf-8') as arquivo:
         for cpf, dados in alunos.items():
-            linha = f"{cpf};{dados['nome']};{dados['telefone']};{dados['email']};{dados['endereco']}\n"
+            linha = f"{cpf};{dados['nome']};{dados['telefone']};{dados['email']}\n"
             arquivo.write(linha)
 
 # Função para cadastrar um novo aluno
@@ -35,13 +34,11 @@ def cadastrar_aluno(alunos):
     nome = input("Nome: ")
     telefone = input("Telefone: ")
     email = input("E-mail: ")
-    endereco = input("Endereço: ")
 
     alunos[cpf] = {
         'nome': nome,
         'telefone': telefone,
-        'email': email,
-        'endereco': endereco
+        'email': email
     }
     salvar_alunos(alunos)
     print("Aluno cadastrado com sucesso!")
@@ -54,7 +51,6 @@ def buscar_aluno(alunos):
         print(f"Nome: {aluno['nome']}")
         print(f"Telefone: {aluno['telefone']}")
         print(f"E-mail: {aluno['email']}")
-        print(f"Endereço: {aluno['endereco']}")
     else:
         print("Aluno não encontrado.")
 
@@ -66,13 +62,11 @@ def alterar_aluno(alunos):
         nome = input(f"Nome atual ({alunos[cpf]['nome']}): ") or alunos[cpf]['nome']
         telefone = input(f"Telefone atual ({alunos[cpf]['telefone']}): ") or alunos[cpf]['telefone']
         email = input(f"E-mail atual ({alunos[cpf]['email']}): ") or alunos[cpf]['email']
-        endereco = input(f"Endereço atual ({alunos[cpf]['endereco']}): ") or alunos[cpf]['endereco']
 
         alunos[cpf] = {
             'nome': nome,
             'telefone': telefone,
-            'email': email,
-            'endereco': endereco
+            'email': email
         }
         salvar_alunos(alunos)
         print("Aluno atualizado com sucesso!")
@@ -97,7 +91,6 @@ def mostrar_todos(alunos):
             print(f"Nome: {dados['nome']}")
             print(f"Telefone: {dados['telefone']}")
             print(f"E-mail: {dados['email']}")
-            print(f"Endereço: {dados['endereco']}")
     else:
         print("Nenhum aluno cadastrado.")
 
