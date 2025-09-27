@@ -1,20 +1,29 @@
-import json
 import os
 
 # Nome do arquivo onde vamos salvar os alunos
-ARQUIVO_alunos = 'alunos.json'
+ARQUIVO_alunos = 'alunos.txt'
 
-# Função para carregar os alunos do arquivo JSON
+# Função para carregar os alunos do arquivo TXT
 def carregar_alunos():
+    alunos = {}
     if os.path.exists(ARQUIVO_alunos):
-        with open(ARQUIVO_alunos, 'r') as arquivo:
-            return json.load(arquivo)
-    return {}
+        with open(ARQUIVO_alunos, 'r', encoding='utf-8') as arquivo:
+            for linha in arquivo:
+                cpf, nome, telefone, email, endereco = linha.strip().split(';')
+                alunos[cpf] = {
+                    'nome': nome,
+                    'telefone': telefone,
+                    'email': email,
+                    'endereco': endereco
+                }
+    return alunos
 
-# Função para salvar os alunos no arquivo JSON
+# Função para salvar os alunos no arquivo TXT
 def salvar_alunos(alunos):
-    with open(ARQUIVO_alunos, 'w') as arquivo:
-        json.dump(alunos, arquivo, indent=4)
+    with open(ARQUIVO_alunos, 'w', encoding='utf-8') as arquivo:
+        for cpf, dados in alunos.items():
+            linha = f"{cpf};{dados['nome']};{dados['telefone']};{dados['email']};{dados['endereco']}\n"
+            arquivo.write(linha)
 
 # Função para cadastrar um novo aluno
 def cadastrar_aluno(alunos):
@@ -35,7 +44,7 @@ def cadastrar_aluno(alunos):
         'endereco': endereco
     }
     salvar_alunos(alunos)
-    print("aluno cadastrado com sucesso!")
+    print("Aluno cadastrado com sucesso!")
 
 # Função para buscar um aluno
 def buscar_aluno(alunos):
@@ -47,7 +56,7 @@ def buscar_aluno(alunos):
         print(f"E-mail: {aluno['email']}")
         print(f"Endereço: {aluno['endereco']}")
     else:
-        print("aluno não encontrado.")
+        print("Aluno não encontrado.")
 
 # Função para alterar um aluno
 def alterar_aluno(alunos):
@@ -66,9 +75,9 @@ def alterar_aluno(alunos):
             'endereco': endereco
         }
         salvar_alunos(alunos)
-        print("aluno atualizado com sucesso!")
+        print("Aluno atualizado com sucesso!")
     else:
-        print("aluno não encontrado.")
+        print("Aluno não encontrado.")
 
 # Função para apagar um aluno
 def apagar_aluno(alunos):
@@ -76,9 +85,9 @@ def apagar_aluno(alunos):
     if cpf in alunos:
         del alunos[cpf]
         salvar_alunos(alunos)
-        print("aluno apagado com sucesso!")
+        print("Aluno apagado com sucesso!")
     else:
-        print("aluno não encontrado.")
+        print("Aluno não encontrado.")
 
 # Função para mostrar todos os alunos
 def mostrar_todos(alunos):
