@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "CRUD ALUNOS.C": "cpp",
-        "CRUD_Atividades.C": "cpp"
+        "CRUD_Atividades.C": "cpp",
+        "stdlib.h": "c",
+        "locale.h": "c",
+        "stdio.h": "c",
+        "crud_cadastro.h": "c"
     }
 }
