@@ -2,13 +2,13 @@
 #include <locale.h>
 #include "CRUD_Cadastro.h"
 #include "CRUD_Turmas.h"
+#include "CRUD_Aulas.h"
 
-// Função auxiliar para limpar o buffer de entrada (incluída no main para garantir uso)
+// Função auxiliar para limpar o buffer de entrada (mantida aqui para garantir uso)
 void limpar_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF) { }
 }
-
 
 // Função ajustada do menu de cadastro/login que retorna se houve login e preenche RA
 int menuCadastroLoginComRA(const char *arquivo, const char *tipo, char *usuarioRA) {
@@ -43,7 +43,9 @@ int menuCadastroLoginComRA(const char *arquivo, const char *tipo, char *usuarioR
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
-
+    
+    // LINHA system("chcp 65001"); FOI REMOVIDA
+    
     int opcao;
     char usuarioRA[20];
 
@@ -59,30 +61,29 @@ int main() {
         if (opcao == 1) {
             int alunoLogado = menuCadastroLoginComRA(ARQ_ALUNOS, "Aluno", usuarioRA);
             if (alunoLogado) {
-    int escolha_aluno;
-    do {
-        printf("\n--- Menu Aluno ---\n");
-        printf("1. Alterar Cadastro\n");
-        printf("2. Ver Minhas Turmas\n"); // NOVO: Opção para o aluno ver suas turmas
-        printf("3. Apagar Minha Conta\n");
-        printf("4. Voltar\n"); // Novo 'Voltar' para o aluno
-        printf("Escolha: ");
-        scanf("%d", &escolha_aluno);
-        limpar_buffer();
+                int escolha_aluno;
+                do {
+                    printf("\n--- Menu Aluno ---\n");
+                    printf("1. Alterar Cadastro\n");
+                    printf("2. Ver Minhas Turmas\n"); 
+                    printf("3. Apagar Minha Conta\n");
+                    printf("4. Voltar\n"); 
+                    printf("Escolha: ");
+                    scanf("%d", &escolha_aluno);
+                    limpar_buffer();
 
-        if (escolha_aluno == 1) {
-            menuInterno("Aluno", ARQ_ALUNOS, usuarioRA);
-        } else if (escolha_aluno == 2) {
-            // CHAMA A NOVA FUNÇÃO:
-            listarTurmasAluno(usuarioRA); 
-        } else if (escolha_aluno == 3) {
-            // Chama a lógica de apagar conta (que deve estar em CRUD_Cadastro.c)
-            apagarConta(ARQ_ALUNOS, usuarioRA); 
-            break; // Sai do menu interno após apagar a conta
-        }
-        // Repetição se escolha_aluno != 4
-    } while (escolha_aluno != 4);
-} 
+                    if (escolha_aluno == 1) {
+                        menuInterno("Aluno", ARQ_ALUNOS, usuarioRA);
+                    } else if (escolha_aluno == 2) {
+                        // CHAMA A FUNÇÃO DE TURMAS DO ALUNO:
+                        listarTurmasAluno(usuarioRA); 
+                    } else if (escolha_aluno == 3) {
+                        // Chama a lógica de apagar conta
+                        apagarConta(ARQ_ALUNOS, usuarioRA); 
+                        break; // Sai do menu interno após apagar a conta
+                    }
+                } while (escolha_aluno != 4);
+            } 
         } 
         else if(opcao == 2) {
             int professorLogado = menuCadastroLoginComRA(ARQ_PROFESSORES, "Professor", usuarioRA);
@@ -90,24 +91,28 @@ int main() {
                 int escolha;
                 do { 
                     printf("\n--- Menu Professor ---\n");
-                    printf("1. Gerenciar Cadastro\n2. Gerenciar Turmas\n3. Voltar\nEscolha: ");
+                    printf("1. Gerenciar Cadastro\n2. Gerenciar Turmas\n3. Gerenciar Aulas\n4. Voltar\nEscolha: ");
                     scanf("%d", &escolha);
-                    limpar_buffer(); // <-- Limpeza de buffer do menu interno do Professor
+                    limpar_buffer(); 
                     
                     if(escolha == 1) {
-                        // 'menuInterno' tratará Alterar Cadastro, CRUD Alunos e Apagar Conta Professor
+                        // Gerenciar Cadastro (Alterar/CRUD Alunos/Apagar Conta Prof)
                         menuInterno("Professor", ARQ_PROFESSORES, usuarioRA);
                     }
                     else if(escolha == 2) {
-                        // 'menuTurmas' é o código que acabamos de corrigir (CRUD_Turmas.c)
+                        // Gerenciar Turmas (Criar/Listar/Add Aluno)
                         menuTurmas(usuarioRA); 
                     }
-                } while(escolha != 3);
+                    else if(escolha == 3) {
+                        // Gerenciar Aulas (Criar/Listar Aulas)
+                        menuAulas(usuarioRA);
+                    }
+                } while(escolha != 4); // Ajustado para 4 opções no menu Professor
             }
         }
 
     } while (opcao != 3);
 
-    printf("Saindo do sistema. Até mais!\n");
+    printf("Saindo do sistema.  Adeus!!!\n");
     return 0;
 }

@@ -132,12 +132,12 @@ void cadastrar(Registro lista[], int *qtd, const char *arquivo) {
 
     printf("Nome e Sobrenome (Max 49): ");
     scanf(" %49[^\n]", r.nome);
-    printf("CPF (Max 19): ");
-    scanf(" %19[^\n]", r.cpf);
+    printf("CPF (Max 14): ");
+    scanf(" %14[^\n]", r.cpf);
 
     do {
-        printf("Telefone (Max 19): ");
-        scanf(" %19[^\n]", r.telefone);
+        printf("Telefone (Max 15): ");
+        scanf(" %15[^\n]", r.telefone);
         if (!validarTelefone(r.telefone)) {
             printf("Formato inválido! Tente novamente.\n");
         }
