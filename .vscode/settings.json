@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "CRUD ALUNOS.C": "cpp",
+        "CRUD_Atividades.C": "cpp",
+        "stdlib.h": "c",
+        "locale.h": "c",
+        "stdio.h": "c",
+        "crud_cadastro.h": "c",
+        "CRUD_Aulas.C": "cpp",
+        "crud_turmas.h": "c",
+        "CRUD_AULAS.H": "cpp"
+    }
+}
