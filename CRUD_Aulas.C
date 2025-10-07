@@ -8,8 +8,8 @@
 
 // Funções de utilidade assumidas (protótipos devem estar em algum .h)
 extern void limpar_buffer();
-// NÃO É MAIS NECESSÁRIO declarar extern carregarTurmas, MAX_TURMAS e MAX_ALUNOS_TURMA,
-// pois elas são resolvidas pelo include "CRUD_Turmas.h"
+
+
 
 
 // --- Funções Auxiliares de Data ---
@@ -55,7 +55,7 @@ int is_this_week(const char *aula_date_str) {
     time_t aula_time = mktime(&aula_tm);
 
     // 3. Compara se a data da aula está entre o início do domingo e o fim do sábado
-    // Ajuste: A hora 00:00:00 de domingo até 23:59:59 de sábado
+    //  A hora 00:00:00 de domingo até 23:59:59 de sábado
     if (aula_time >= sunday_start_time && aula_time < saturday_end_time) {
         return 1;
     }

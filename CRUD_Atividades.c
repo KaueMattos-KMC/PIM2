@@ -137,7 +137,7 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
     printf("Descrição (Max 255): ");
     scanf(" %255[^\n]", a.descricao);
     
-    // NOVO: Solicita a data de entrega
+    //  Solicita a data de entrega
     printf("Data de Entrega (DD/MM/AAAA): ");
     scanf(" %10[^\n]", a.data);
 
@@ -145,7 +145,7 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
     (*qtd)++;
     salvarAtividades(atividades, *qtd);
     
-    // Melhoria de usabilidade: Exibe o ID gerado para que o professor possa excluí-lo
+    //  Exibe o ID gerado para que o professor possa excluí-lo
     printf("Atividade criada com sucesso (ID: %s) e enviada para a turma %s!\n", a.id, a.turmaCodigo);
 }
 
