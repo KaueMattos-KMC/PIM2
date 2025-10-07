@@ -116,6 +116,6 @@ int main() {
 
     } while (opcao != 3);
 
-    printf("Saindo do sistema. Adeus!!!\n");
+    printf("Saindo do sistema. Adeus!!\n");
     return 0;
 }

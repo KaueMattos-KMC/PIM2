@@ -23,4 +23,4 @@ void menuAtividades(const char *professorRA);
 
 void listarAtividadesAluno(const char *alunoRA);
 
-#endif // CRUD_ATIVIDADES_H
+#endif 
