@@ -35,4 +35,4 @@ void menuDiario(const char *professorRA);
 // Protótipos de Funções do Aluno
 void consultarDesempenho(const char *alunoRA);
 
-#endif // CRUD_DIARIO_H
+#endif 
