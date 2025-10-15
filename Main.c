@@ -5,8 +5,9 @@
 #include "CRUD_Turmas.h"
 #include "CRUD_Aulas.h" 
 #include "CRUD_Atividades.h"
+#include "CRUD_Diario.h" // MÓDULO DIÁRIO ELETRÔNICO
 
-// Função auxiliar para limpar o buffer de entrada 
+// Função auxiliar para limpar o buffer de entrada (implementada aqui)
 void limpar_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF) { }
@@ -57,7 +58,7 @@ int main() {
         scanf("%d", &opcao);
         limpar_buffer();
 
-        if (opcao == 1) {
+        if (opcao == 1) { // MENU ALUNO
             int alunoLogado = menuCadastroLoginComRA(ARQ_ALUNOS, "Aluno", usuarioRA);
             if (alunoLogado) {
                 int escolha_aluno;
@@ -67,8 +68,9 @@ int main() {
                     printf("2. Ver Minhas Turmas\n"); 
                     printf("3. Ver Aulas da Semana\n");
                     printf("4. Ver Atividades\n");
-                    printf("5. Apagar Minha Conta\n");
-                    printf("6. Voltar\n"); 
+                    printf("5. Consultar Desempenho (Notas/Faltas)\n"); // NOVO: DIÁRIO ALUNO
+                    printf("6. Apagar Minha Conta\n");
+                    printf("7. Voltar\n"); 
                     printf("Escolha: ");
                     scanf("%d", &escolha_aluno);
                     limpar_buffer();
@@ -82,19 +84,27 @@ int main() {
                     } else if (escolha_aluno == 4) {
                         listarAtividadesAluno(usuarioRA); 
                     } else if (escolha_aluno == 5) {
+                        consultarDesempenho(usuarioRA); // CHAMA A FUNÇÃO DE CONSULTA DO DIÁRIO
+                    } else if (escolha_aluno == 6) {
                         apagarConta(ARQ_ALUNOS, usuarioRA); 
                         break; 
                     }
-                } while (escolha_aluno != 6);
+                } while (escolha_aluno != 7);
             }
         } 
-        else if(opcao == 2) {
+        else if(opcao == 2) { // MENU PROFESSOR
             int professorLogado = menuCadastroLoginComRA(ARQ_PROFESSORES, "Professor", usuarioRA);
             if(professorLogado) {
                 int escolha;
                 do { 
                     printf("\n--- Menu Professor ---\n");
-                    printf("1. Gerenciar Cadastro\n2. Gerenciar Turmas\n3. Gerenciar Aulas\n4. Gerenciar Atividades\n5. Voltar\nEscolha: ");
+                    printf("1. Gerenciar Cadastro\n");
+                    printf("2. Gerenciar Turmas\n");
+                    printf("3. Gerenciar Aulas\n");
+                    printf("4. Gerenciar Atividades\n");
+                    printf("5. Diário Eletrônico (Notas/Faltas)\n"); // NOVO: DIÁRIO PROFESSOR
+                    printf("6. Voltar\n");
+                    printf("Escolha: ");
                     scanf("%d", &escolha);
                     limpar_buffer(); 
                     
@@ -110,12 +120,15 @@ int main() {
                     else if(escolha == 4) {
                         menuAtividades(usuarioRA); 
                     }
-                } while(escolha != 5);
+                    else if(escolha == 5) {
+                        menuDiario(usuarioRA); // CHAMA O MENU PRINCIPAL DO DIÁRIO
+                    }
+                } while(escolha != 6);
             }
         }
 
     } while (opcao != 3);
 
-    printf("Saindo do sistema. Adeus!!\n");
+    printf("Saindo do sistema. Adeus!!!\n");
     return 0;
 }
