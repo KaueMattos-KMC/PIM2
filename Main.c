@@ -36,6 +36,11 @@ int menuCadastroLoginComRA(const char *arquivo, const char *tipo, char *usuarioR
                 logado = login(arquivo, tipo, usuarioRA);
                 if (logado) return 1;
                 break;
+            default: // Opção inválida
+                if (opcao != 3) {
+                    printf("Opção inválida. Tente novamente.\n");
+                }
+                break;
         }
     } while (opcao != 3);
 
@@ -68,27 +73,27 @@ int main() {
                     printf("2. Ver Minhas Turmas\n"); 
                     printf("3. Ver Aulas da Semana\n");
                     printf("4. Ver Atividades\n");
-                    printf("5. Consultar Desempenho (Notas/Faltas)\n"); // NOVO: DIÁRIO ALUNO
+                    printf("5. Consultar Desempenho (Notas/Faltas)\n"); 
                     printf("6. Apagar Minha Conta\n");
                     printf("7. Voltar\n"); 
                     printf("Escolha: ");
                     scanf("%d", &escolha_aluno);
                     limpar_buffer();
 
-                    if (escolha_aluno == 1) {
-                        menuInterno("Aluno", ARQ_ALUNOS, usuarioRA);
-                    } else if (escolha_aluno == 2) {
-                        listarTurmasAluno(usuarioRA); 
-                    } else if (escolha_aluno == 3) {
-                        listarAulasAluno(usuarioRA);
-                    } else if (escolha_aluno == 4) {
-                        listarAtividadesAluno(usuarioRA); 
-                    } else if (escolha_aluno == 5) {
-                        consultarDesempenho(usuarioRA); // CHAMA A FUNÇÃO DE CONSULTA DO DIÁRIO
-                    } else if (escolha_aluno == 6) {
-                        apagarConta(ARQ_ALUNOS, usuarioRA); 
-                        break; 
+                    switch (escolha_aluno) {
+                        case 1: menuInterno("Aluno", ARQ_ALUNOS, usuarioRA); break;
+                        case 2: listarTurmasAluno(usuarioRA); break; 
+                        case 3: listarAulasAluno(usuarioRA); break;
+                        case 4: listarAtividadesAluno(usuarioRA); break; 
+                        case 5: consultarDesempenho(usuarioRA); break;
+                        case 6: apagarConta(ARQ_ALUNOS, usuarioRA); break; 
+                        default:
+                            if (escolha_aluno != 7) {
+                                printf("Opção inválida. Tente novamente.\n");
+                            }
+                            break;
                     }
+                    if (escolha_aluno == 6) break; // Sai se a conta foi apagada
                 } while (escolha_aluno != 7);
             }
         } 
@@ -102,29 +107,28 @@ int main() {
                     printf("2. Gerenciar Turmas\n");
                     printf("3. Gerenciar Aulas\n");
                     printf("4. Gerenciar Atividades\n");
-                    printf("5. Diário Eletrônico (Notas/Faltas)\n"); // NOVO: DIÁRIO PROFESSOR
+                    printf("5. Diário Eletrônico (Notas/Faltas)\n"); 
                     printf("6. Voltar\n");
                     printf("Escolha: ");
                     scanf("%d", &escolha);
                     limpar_buffer(); 
                     
-                    if(escolha == 1) {
-                        menuInterno("Professor", ARQ_PROFESSORES, usuarioRA);
-                    }
-                    else if(escolha == 2) {
-                        menuTurmas(usuarioRA); 
-                    }
-                    else if(escolha == 3) {
-                        menuAulas(usuarioRA);
-                    }
-                    else if(escolha == 4) {
-                        menuAtividades(usuarioRA); 
-                    }
-                    else if(escolha == 5) {
-                        menuDiario(usuarioRA); // CHAMA O MENU PRINCIPAL DO DIÁRIO
+                    switch (escolha) {
+                        case 1: menuInterno("Professor", ARQ_PROFESSORES, usuarioRA); break;
+                        case 2: menuTurmas(usuarioRA); break; 
+                        case 3: menuAulas(usuarioRA); break;
+                        case 4: menuAtividades(usuarioRA); break; 
+                        case 5: menuDiario(usuarioRA); break; 
+                        default:
+                            if (escolha != 6) {
+                                printf("Opção inválida. Tente novamente.\n");
+                            }
+                            break;
                     }
                 } while(escolha != 6);
             }
+        } else if (opcao != 3) {
+             printf("Opção inválida. Tente novamente.\n");
         }
 
     } while (opcao != 3);
