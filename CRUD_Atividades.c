@@ -19,10 +19,10 @@ void salvarAtividades(Atividade atividades[], int qtd) {
         return;
     }
     for (int i = 0; i < qtd; i++) {
-        // Agora salva 7 campos (incluindo a data)
-        fprintf(fp, "%s;%s;%s;%s;%s;%s;%s\n", 
+        // Salva 6 campos (sem o campo 'tipo')
+        fprintf(fp, "%s;%s;%s;%s;%s;%s\n", 
                 atividades[i].id, atividades[i].professorRA, atividades[i].turmaCodigo,
-                atividades[i].tipo, atividades[i].materia, atividades[i].descricao, atividades[i].data);
+                atividades[i].materia, atividades[i].descricao, atividades[i].data);
     }
     fclose(fp);
 }
@@ -43,22 +43,22 @@ int carregarAtividades(Atividade atividades[]) {
         int campo = 0;
         
         token = strtok(linha, ";");
-        // A leitura espera 7 campos
-        while (token != NULL && campo < 7) { 
+        // A leitura espera 6 campos (sem o tipo)
+        while (token != NULL && campo < 6) { 
             switch (campo) {
                 case 0: strncpy(atividades[qtd].id, token, sizeof(atividades[qtd].id) - 1); atividades[qtd].id[sizeof(atividades[qtd].id) - 1] = '\0'; break;
                 case 1: strncpy(atividades[qtd].professorRA, token, sizeof(atividades[qtd].professorRA) - 1); atividades[qtd].professorRA[sizeof(atividades[qtd].professorRA) - 1] = '\0'; break;
                 case 2: strncpy(atividades[qtd].turmaCodigo, token, sizeof(atividades[qtd].turmaCodigo) - 1); atividades[qtd].turmaCodigo[sizeof(atividades[qtd].turmaCodigo) - 1] = '\0'; break;
-                case 3: strncpy(atividades[qtd].tipo, token, sizeof(atividades[qtd].tipo) - 1); atividades[qtd].tipo[sizeof(atividades[qtd].tipo) - 1] = '\0'; break;
-                case 4: strncpy(atividades[qtd].materia, token, sizeof(atividades[qtd].materia) - 1); atividades[qtd].materia[sizeof(atividades[qtd].materia) - 1] = '\0'; break;
-                case 5: strncpy(atividades[qtd].descricao, token, sizeof(atividades[qtd].descricao) - 1); atividades[qtd].descricao[sizeof(atividades[qtd].descricao) - 1] = '\0'; break;
-                case 6: strncpy(atividades[qtd].data, token, sizeof(atividades[qtd].data) - 1); atividades[qtd].data[sizeof(atividades[qtd].data) - 1] = '\0'; break; // Campo data
+                // Os campos 3 e 4 foram renomeados (antigos 4 e 5)
+                case 3: strncpy(atividades[qtd].materia, token, sizeof(atividades[qtd].materia) - 1); atividades[qtd].materia[sizeof(atividades[qtd].materia) - 1] = '\0'; break;
+                case 4: strncpy(atividades[qtd].descricao, token, sizeof(atividades[qtd].descricao) - 1); atividades[qtd].descricao[sizeof(atividades[qtd].descricao) - 1] = '\0'; break;
+                case 5: strncpy(atividades[qtd].data, token, sizeof(atividades[qtd].data) - 1); atividades[qtd].data[sizeof(atividades[qtd].data) - 1] = '\0'; break; // Campo data
             }
             campo++;
             token = strtok(NULL, ";");
         }
         
-        if (campo == 7) { // Espera 7 campos
+        if (campo == 6) { // Espera 6 campos
             qtd++;
         }
     }
@@ -70,6 +70,10 @@ int carregarAtividades(Atividade atividades[]) {
 // --- Funções do Professor ---
 
 void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
+    char buffer_entrada[256]; // Buffer seguro para entrada
+    
+    printf("\n(Digite 0 para cancelar a operação)\n");
+    
     if (*qtd >= MAX_ATIVIDADES) {
         printf("Limite de atividades atingido.\n");
         return;
@@ -101,9 +105,6 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
 
     char codigo_turma[10];
     int turma_encontrada = 0;
-    char buffer_entrada[256]; // Buffer seguro para entrada
-
-    
 
     // Listar turmas do professor para facilitar a escolha
     printf("\n--- Suas Turmas ---\n");
@@ -142,17 +143,7 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
 
     strcpy(a.turmaCodigo, codigo_turma);
     
-    // 2. Entrada: Tipo da Atividade
-    printf("Tipo da Atividade (Max 29): ");
-    scanf(" %29[^\n]", buffer_entrada);
-    limpar_buffer();
-    if (strcmp(buffer_entrada, "0") == 0) {
-        printf("Criação de atividade cancelada.\n");
-        return;
-    }
-    strcpy(a.tipo, buffer_entrada);
-    
-    // 3. Entrada: Matéria
+    // 2. Entrada: Matéria (substitui o Tipo)
     printf("Matéria (Max 49): ");
     scanf(" %49[^\n]", buffer_entrada);
     limpar_buffer();
@@ -162,7 +153,7 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
     }
     strcpy(a.materia, buffer_entrada);
     
-    // 4. Entrada: Descrição
+    // 3. Entrada: Descrição
     printf("Descrição (Max 255): ");
     scanf(" %255[^\n]", buffer_entrada);
     limpar_buffer();
@@ -172,7 +163,7 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
     }
     strcpy(a.descricao, buffer_entrada);
 
-    // 5. Entrada: Data de Entrega
+    // 4. Entrada: Data de Entrega
     printf("Data de Entrega (DD/MM/AAAA): ");
     scanf(" %10[^\n]", buffer_entrada);
     limpar_buffer();
@@ -193,8 +184,16 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
 
 void excluirAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
     char id[10];
+    
+    printf("\n(Digite 0 para cancelar a operação)\n");
     printf("Digite o ID da atividade a excluir: ");
     scanf(" %9[^\n]", id);
+    limpar_buffer();
+    
+    if (strcmp(id, "0") == 0) {
+        printf("Exclusão de atividade cancelada.\n");
+        return;
+    }
 
     int pos = -1;
     for (int i = 0; i < *qtd; i++) {
@@ -226,8 +225,9 @@ void listarAtividadesProfessor(Atividade atividades[], int qtd, const char *prof
     for (int i = 0; i < qtd; i++) {
         if (strcmp(atividades[i].professorRA, professorRA) == 0) {
             // Exibindo a Data
-            printf("ID: %s | Data: %s | Matéria: %s | Tipo: %s\n",
-                   atividades[i].id, atividades[i].data, atividades[i].materia, atividades[i].tipo);
+            // REMOVIDO: Tipo
+            printf("ID: %s | Data: %s | Matéria: %s\n",
+                   atividades[i].id, atividades[i].data, atividades[i].materia);
             printf("  Turma: %s | Descrição: %s\n", atividades[i].turmaCodigo, atividades[i].descricao);
             encontrou = 1;
         }
@@ -292,8 +292,8 @@ void listarAtividadesAluno(const char *alunoRA) {
                     if (strcmp(turmas[k].alunos[l], alunoRA) == 0) {
                         // Aluno pertence à turma
                         // Exibindo a Data
-                        printf("ID: %s | Data: %s | Matéria: %s | Tipo: %s\n",
-                               atividades[i].id, atividades[i].data, atividades[i].materia, atividades[i].tipo);
+                        printf("ID: %s | Data: %s | Matéria: %s\n",
+                               atividades[i].id, atividades[i].data, atividades[i].materia);
                         printf("  Turma: %s | Descrição: %s\n", atividades[i].turmaCodigo, atividades[i].descricao);
                         encontrou_atividade = 1;
                         goto next_atividade; // Pula para a próxima atividade

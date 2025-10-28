@@ -3,7 +3,6 @@
 #include <stdlib.h> 
 #include "CRUD_Cadastro.h"
 #include "CRUD_Turmas.h"
-#include "CRUD_Aulas.h" 
 #include "CRUD_Atividades.h"
 #include "CRUD_Diario.h" // MÓDULO DIÁRIO ELETRÔNICO
 
@@ -71,11 +70,10 @@ int main() {
                     printf("\n--- Menu Aluno ---\n");
                     printf("1. Alterar Cadastro\n");
                     printf("2. Ver Minhas Turmas\n"); 
-                    printf("3. Ver Aulas da Semana\n");
-                    printf("4. Ver Atividades\n");
-                    printf("5. Consultar Desempenho (Notas/Faltas)\n"); 
-                    printf("6. Apagar Minha Conta\n");
-                    printf("7. Voltar\n"); 
+                    printf("3. Ver Atividades\n"); 
+                    printf("4. Consultar Desempenho (Notas/Faltas)\n"); 
+                    printf("5. Apagar Minha Conta\n");
+                    printf("6. Voltar\n");
                     printf("Escolha: ");
                     scanf("%d", &escolha_aluno);
                     limpar_buffer();
@@ -83,18 +81,17 @@ int main() {
                     switch (escolha_aluno) {
                         case 1: menuInterno("Aluno", ARQ_ALUNOS, usuarioRA); break;
                         case 2: listarTurmasAluno(usuarioRA); break; 
-                        case 3: listarAulasAluno(usuarioRA); break;
-                        case 4: listarAtividadesAluno(usuarioRA); break; 
-                        case 5: consultarDesempenho(usuarioRA); break;
-                        case 6: apagarConta(ARQ_ALUNOS, usuarioRA); break; 
+                        case 3: listarAtividadesAluno(usuarioRA); break; 
+                        case 4: consultarDesempenho(usuarioRA); break; 
+                        case 5: apagarConta(ARQ_ALUNOS, usuarioRA); break; 
                         default:
-                            if (escolha_aluno != 7) {
+                            if (escolha_aluno != 6) { 
                                 printf("Opção inválida. Tente novamente.\n");
                             }
                             break;
                     }
-                    if (escolha_aluno == 6) break; // Sai se a conta foi apagada
-                } while (escolha_aluno != 7);
+                    if (escolha_aluno == 5) break; 
+                } while (escolha_aluno != 6); 
             }
         } 
         else if(opcao == 2) { // MENU PROFESSOR
@@ -105,10 +102,9 @@ int main() {
                     printf("\n--- Menu Professor ---\n");
                     printf("1. Gerenciar Cadastro\n");
                     printf("2. Gerenciar Turmas\n");
-                    printf("3. Gerenciar Aulas\n");
-                    printf("4. Gerenciar Atividades\n");
-                    printf("5. Diário Eletrônico (Notas/Faltas)\n"); 
-                    printf("6. Voltar\n");
+                    printf("3. Gerenciar Atividades\n"); 
+                    printf("4. Diário Eletrônico (Notas/Faltas)\n"); 
+                    printf("5. Voltar\n"); 
                     printf("Escolha: ");
                     scanf("%d", &escolha);
                     limpar_buffer(); 
@@ -116,19 +112,18 @@ int main() {
                     switch (escolha) {
                         case 1: menuInterno("Professor", ARQ_PROFESSORES, usuarioRA); break;
                         case 2: menuTurmas(usuarioRA); break; 
-                        case 3: menuAulas(usuarioRA); break;
-                        case 4: menuAtividades(usuarioRA); break; 
-                        case 5: menuDiario(usuarioRA); break; 
+                        case 3: menuAtividades(usuarioRA); break; 
+                        case 4: menuDiario(usuarioRA); break; 
                         default:
-                            if (escolha != 6) {
+                            if (escolha != 5) { 
                                 printf("Opção inválida. Tente novamente.\n");
                             }
                             break;
                     }
-                } while(escolha != 6);
+                } while(escolha != 5); 
             }
         } else if (opcao != 3) {
-             printf("Opção inválida. Tente novamente.\n");
+            printf("Opção inválida. Tente novamente.\n");
         }
 
     } while (opcao != 3);
