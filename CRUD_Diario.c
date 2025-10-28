@@ -12,7 +12,6 @@ extern void limpar_buffer();
 extern int carregarTurmas(Turma turmas[]);
 extern int carregar(Registro lista[], const char *arquivo);
 extern int carregarAtividades(Atividade atividades[]);
-// Linha removida: extern const char *ARQ_ALUNOS;
 
 // --- Funções Auxiliares de Arquivo ---
 
@@ -83,6 +82,7 @@ void lancarNota(const char *professorRA) {
     int qtd_turmas = carregarTurmas(turmas);
 
     char id_atividade[10], aluno_ra[20];
+    char buffer_entrada[50]; // Buffer para entradas seguras e cancelamento
     int atividade_idx = -1;
     float nota_lida;
     
@@ -95,10 +95,14 @@ void lancarNota(const char *professorRA) {
         }
     }
     printf("--------------------------------\n");
+    printf(" (Digite 0 para cancelar a operação)\n");
 
     // 2. Coletar dados da nota
- printf("Digite o ID da Atividade: ");
+    printf("Digite o ID da Atividade: ");
     scanf(" %9[^\n]", id_atividade);
+    if (strcmp(id_atividade, "0") == 0) { printf("Operação cancelada.\n"); return; }
+
+    // Busca da atividade
     for (int i = 0; i < qtd_atividades; i++) {
         if (strcmp(atividades[i].id, id_atividade) == 0 &&
             strcmp(atividades[i].professorRA, professorRA) == 0) {
@@ -113,13 +117,17 @@ void lancarNota(const char *professorRA) {
 
     printf("Digite o RA do aluno: ");
     scanf(" %19[^\n]", aluno_ra);
+    if (strcmp(aluno_ra, "0") == 0) { printf("Operação cancelada.\n"); return; }
+    
     printf("Digite a Nota (ex: 8.5): ");
-    if (scanf("%f", &nota_lida) != 1) {
+    scanf(" %49[^\n]", buffer_entrada);
+    if (strcmp(buffer_entrada, "0") == 0) { printf("Operação cancelada.\n"); return; }
+
+    // Tenta converter a nota do buffer_entrada
+    if (sscanf(buffer_entrada, "%f", &nota_lida) != 1) {
         printf("Erro: Nota inválida.\n");
-        limpar_buffer();
         return;
     }
-    limpar_buffer();
 
     // 3. Verificar se o aluno pertence à turma
     int aluno_pertence = 0;
@@ -176,8 +184,10 @@ void registrarFrequencia(const char *professorRA) {
     int qtd_turmas = carregarTurmas(turmas);
 
     char cod_turma[10], data_chamada[11], status_lido[5];
+    char buffer_entrada[50]; // Buffer para cancelamento
     int turma_idx = -1;
     
+    printf(" (Digite 0 para cancelar a operação)\n");
     // 1. Selecionar a Turma do Professor
     printf("\n--- Suas Turmas ---\n");
     for (int i = 0; i < qtd_turmas; i++) {
@@ -189,6 +199,8 @@ void registrarFrequencia(const char *professorRA) {
     
     printf("Digite o Código da Turma para a Chamada: ");
     scanf(" %9[^\n]", cod_turma);
+    if (strcmp(cod_turma, "0") == 0) { printf("Operação cancelada.\n"); return; }
+
 
     for (int i = 0; i < qtd_turmas; i++) {
         if (strcmp(turmas[i].codigo, cod_turma) == 0 &&
@@ -204,6 +216,7 @@ void registrarFrequencia(const char *professorRA) {
     
     printf("Digite a Data da Chamada (DD/MM/AAAA): ");
     scanf(" %10[^\n]", data_chamada);
+    if (strcmp(data_chamada, "0") == 0) { printf("Operação cancelada.\n"); return; }
 
     // 2. Processar a chamada para cada aluno da turma
     printf("\n-- Chamada da Turma %s em %s --\n", cod_turma, data_chamada);
@@ -216,6 +229,11 @@ void registrarFrequencia(const char *professorRA) {
         
         printf("Status de %s (P/F): ", aluno_ra);
         scanf(" %1[^\n]", status_lido);
+        
+        if (strcmp(status_lido, "0") == 0) { // Verifica se o professor quer abortar
+            printf("Operação de chamada abortada.\n");
+            return;
+        }
         
         char status_final = toupper(status_lido[0]);
 
@@ -256,7 +274,6 @@ void registrarFrequencia(const char *professorRA) {
 
 void listarDiarioProfessor(const char *professorRA) {
     printf("\n--- Consulta Rápida: Notas e Frequências ---\n");
-    // Esta função pode ser complexa. Para simplicidade, apenas listaremos as turmas do professor.
     
     Nota notas[MAX_NOTAS];
     int qtd_notas = carregarNotas(notas);
@@ -264,11 +281,12 @@ void listarDiarioProfessor(const char *professorRA) {
     Turma turmas[MAX_TURMAS];
     int qtd_turmas = carregarTurmas(turmas);
     
-    printf("\n--- Suas Turmas --- \n");
+    printf("\n--- Suas Turmas ---\n");
+    printf(" (Digite 0 para cancelar a operação)\n");
     int encontrou_turma = 0;
     for(int i = 0; i < qtd_turmas; i++) {
         if(strcmp(turmas[i].professorRA, professorRA) == 0) {
-            printf("[%s] %s\n", turmas[i].codigo, turmas[i].nome);
+            printf(" [%s] %s\n", turmas[i].codigo, turmas[i].nome);
             encontrou_turma = 1;
         }
     }
@@ -281,6 +299,8 @@ void listarDiarioProfessor(const char *professorRA) {
     char cod_turma[10];
     printf("Digite o Código da Turma para Detalhes (exibir notas/faltas): ");
     scanf(" %9[^\n]", cod_turma);
+    if (strcmp(cod_turma, "0") == 0) { printf("Operação cancelada.\n"); return; }
+
 
     // Simplificação: apenas exibe todas as notas daquela turma
     printf("\n--- Notas da Turma %s ---\n", cod_turma);
@@ -322,7 +342,6 @@ void listarDiarioProfessor(const char *professorRA) {
     if(total_alunos > 0) {
         printf("Total de Alunos: %d\n", total_alunos);
         printf("Total de Registros de Frequência: %d\n", total_chamadas);
-        // Nota: Um sistema real precisaria agrupar por aluno para calcular faltas por aluno.
     } else {
         printf("Nenhum registro de frequência ou turma encontrada.\n");
     }
@@ -344,6 +363,11 @@ void menuDiario(const char *professorRA) {
             case 1: lancarNota(professorRA); break;
             case 2: registrarFrequencia(professorRA); break;
             case 3: listarDiarioProfessor(professorRA); break;
+            default: 
+                if (opcao != 4) {
+                    printf("Opção inválida. Tente novamente.\n");
+                }
+                break;
         }
     } while (opcao != 4);
 }

@@ -139,9 +139,12 @@ void criarAula(Aula aulas[], int *qtd, const char *professorRA) {
 
     char codigo_turma[10];
     int turma_encontrada = 0;
+    char buffer_entrada[256]; // Buffer seguro para entrada
+
+    printf("\nDigite '0' para cancelar a operação a qualquer momento.\n"); // AVISO DE CANCELAMENTO
 
     // Listar turmas do professor para facilitar a escolha
-    printf("\n--- Turmas do Professor %s ---\n", professorRA);
+    printf("--- Turmas do Professor %s ---\n", professorRA);
     for (int i = 0; i < qtd_turmas; i++) {
         if (strcmp(turmas[i].professorRA, professorRA) == 0) {
             printf("  [%s] %s\n", turmas[i].codigo, turmas[i].nome);
@@ -149,8 +152,17 @@ void criarAula(Aula aulas[], int *qtd, const char *professorRA) {
     }
     printf("-----------------------------------\n");
 
+    // 1. Entrada: Código da Turma
     printf("Código da turma para a aula: ");
-    scanf(" %9[^\n]", codigo_turma);
+    scanf(" %9[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de aula cancelada.\n");
+        return;
+    }
+    strncpy(codigo_turma, buffer_entrada, sizeof(codigo_turma) - 1);
+    codigo_turma[sizeof(codigo_turma) - 1] = '\0';
+
 
     // Validação de que a turma existe e pertence ao professor
     for (int i = 0; i < qtd_turmas; i++) {
@@ -168,14 +180,37 @@ void criarAula(Aula aulas[], int *qtd, const char *professorRA) {
 
     strcpy(a.turmaCodigo, codigo_turma);
     
+    // 2. Entrada: Título da Aula
     printf("Título da Aula (Máx. 49): ");
-    scanf(" %49[^\n]", a.titulo);
+    scanf(" %49[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de aula cancelada.\n");
+        return;
+    }
+    strcpy(a.titulo, buffer_entrada);
+    
+    // 3. Entrada: Conteúdo da Aula
     printf("Conteúdo da Aula (Máx. 255): ");
-    scanf(" %255[^\n]", a.conteudo);
-    // NOVO: Prompt no formato DD/MM/AAAA
+    scanf(" %255[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de aula cancelada.\n");
+        return;
+    }
+    strcpy(a.conteudo, buffer_entrada);
+    
+    // 4. Entrada: Data da Aula
     printf("Data da Aula (Formato DD/MM/AAAA): ");
-    scanf(" %10[^\n]", a.data);
+    scanf(" %10[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de aula cancelada.\n");
+        return;
+    }
+    strcpy(a.data, buffer_entrada);
 
+    // Se chegou até aqui, salva a aula
     aulas[*qtd] = a;
     (*qtd)++;
     salvarAulas(aulas, *qtd);
@@ -270,7 +305,11 @@ void menuAulas(const char *professorRA) {
         switch (opcao) {
             case 1: criarAula(aulas, &qtd, professorRA); break;
             case 2: listarAulasProfessor(aulas, qtd, professorRA); break;
+            default:
+                if (opcao != 3) {
+                    printf("Opção inválida. Tente novamente.\n");
+                }
+                break;
         }
     } while (opcao != 3);
 }
-

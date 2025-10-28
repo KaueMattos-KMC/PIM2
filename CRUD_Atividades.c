@@ -101,6 +101,9 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
 
     char codigo_turma[10];
     int turma_encontrada = 0;
+    char buffer_entrada[256]; // Buffer seguro para entrada
+
+    
 
     // Listar turmas do professor para facilitar a escolha
     printf("\n--- Suas Turmas ---\n");
@@ -111,8 +114,17 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
     }
     printf("--------------------\n");
 
+    // 1. Entrada: Código da Turma
     printf("Código da turma para a atividade: ");
-    scanf(" %9[^\n]", codigo_turma);
+    scanf(" %9[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de atividade cancelada.\n");
+        return;
+    }
+    strncpy(codigo_turma, buffer_entrada, sizeof(codigo_turma) - 1);
+    codigo_turma[sizeof(codigo_turma) - 1] = '\0';
+
 
     // Validação de que a turma existe e pertence ao professor
     for (int i = 0; i < qtd_turmas; i++) {
@@ -130,22 +142,52 @@ void criarAtividade(Atividade atividades[], int *qtd, const char *professorRA) {
 
     strcpy(a.turmaCodigo, codigo_turma);
     
+    // 2. Entrada: Tipo da Atividade
     printf("Tipo da Atividade (Max 29): ");
-    scanf(" %29[^\n]", a.tipo);
-    printf("Matéria (Max 49): ");
-    scanf(" %49[^\n]", a.materia);
-    printf("Descrição (Max 255): ");
-    scanf(" %255[^\n]", a.descricao);
+    scanf(" %29[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de atividade cancelada.\n");
+        return;
+    }
+    strcpy(a.tipo, buffer_entrada);
     
-    //  Solicita a data de entrega
-    printf("Data de Entrega (DD/MM/AAAA): ");
-    scanf(" %10[^\n]", a.data);
+    // 3. Entrada: Matéria
+    printf("Matéria (Max 49): ");
+    scanf(" %49[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de atividade cancelada.\n");
+        return;
+    }
+    strcpy(a.materia, buffer_entrada);
+    
+    // 4. Entrada: Descrição
+    printf("Descrição (Max 255): ");
+    scanf(" %255[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de atividade cancelada.\n");
+        return;
+    }
+    strcpy(a.descricao, buffer_entrada);
 
+    // 5. Entrada: Data de Entrega
+    printf("Data de Entrega (DD/MM/AAAA): ");
+    scanf(" %10[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de atividade cancelada.\n");
+        return;
+    }
+    strcpy(a.data, buffer_entrada);
+
+    // Se chegou até aqui, salva a aula
     atividades[*qtd] = a;
     (*qtd)++;
     salvarAtividades(atividades, *qtd);
     
-    //  Exibe o ID gerado para que o professor possa excluí-lo
+    // Melhoria de usabilidade: Exibe o ID gerado para que o professor possa excluí-lo
     printf("Atividade criada com sucesso (ID: %s) e enviada para a turma %s!\n", a.id, a.turmaCodigo);
 }
 
@@ -216,6 +258,11 @@ void menuAtividades(const char *professorRA) {
             case 1: criarAtividade(atividades, &qtd, professorRA); break;
             case 2: listarAtividadesProfessor(atividades, qtd, professorRA); break;
             case 3: excluirAtividade(atividades, &qtd, professorRA); break;
+            default:
+                if (opcao != 4) {
+                    printf("Opção inválida. Tente novamente.\n");
+                }
+                break;
         }
     } while (opcao != 4);
 }

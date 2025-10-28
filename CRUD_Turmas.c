@@ -5,6 +5,7 @@
 #include "CRUD_Turmas.h"
 
 // Função auxiliar para limpar o buffer de entrada (necessário após scanf("%d"))
+extern void limpar_buffer();
 
 
 void salvarTurmas(Turma turmas[], int qtd) {
@@ -84,17 +85,38 @@ int carregarTurmas(Turma turmas[]) {
     return qtd;
 }
 
-// FUNÇÃO CORRIGIDA: Adicionado limite de caracteres no scanf para segurança.
+// FUNÇÃO CORRIGIDA: Adicionado cancelamento e limite de caracteres no scanf para segurança.
 void criarTurma(Turma turmas[], int *qtd, const char *professorRA) {
+    char buffer_entrada[50]; // Buffer para leitura e cancelamento
+
     if (*qtd >= MAX_TURMAS) {
         printf("Limite de turmas atingido.\n");
         return;
     }
+    
+    
     Turma t;
+    
+    // Entrada: Código da Turma
     printf("Código da turma (Max 9): ");
-    scanf(" %9[^\n]", t.codigo); // Limite de 9 caracteres
+    scanf(" %9[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de turma cancelada.\n");
+        return;
+    }
+    strcpy(t.codigo, buffer_entrada);
+
+    // Entrada: Nome da Turma
     printf("Nome da turma (Max 49): ");
-    scanf(" %49[^\n]", t.nome); // Limite de 49 caracteres
+    scanf(" %49[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Criação de turma cancelada.\n");
+        return;
+    }
+    strcpy(t.nome, buffer_entrada);
+    
     strcpy(t.professorRA, professorRA);
     t.totalAlunos = 0;
     turmas[*qtd] = t;
@@ -112,11 +134,22 @@ void listarTurmas(Turma turmas[], int qtd) {
     }
 }
 
-// FUNÇÃO CORRIGIDA: Adicionado limite de caracteres no scanf para segurança.
+// FUNÇÃO CORRIGIDA: Adicionado cancelamento e limite de caracteres no scanf para segurança.
 void adicionarAlunoTurma(Turma turmas[], int qtd) {
     char codigo[10], ra[20];
+    char buffer_entrada[50]; // Buffer para leitura e cancelamento
+
+    
+    
+    // Entrada: Código da Turma
     printf("Digite o código da turma (Max 9): ");
-    scanf(" %9[^\n]", codigo);
+    scanf(" %9[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Adição de aluno cancelada.\n");
+        return;
+    }
+    strcpy(codigo, buffer_entrada);
 
     for (int i = 0; i < qtd; i++) {
         if (strcmp(turmas[i].codigo, codigo) == 0) {
@@ -124,8 +157,16 @@ void adicionarAlunoTurma(Turma turmas[], int qtd) {
                 printf("Turma cheia.\n");
                 return;
             }
+            
+            // Entrada: RA do Aluno
             printf("Digite o RA do aluno a adicionar (Max 19): ");
-            scanf(" %19[^\n]", ra); // Limite de 19 caracteres
+            scanf(" %19[^\n]", buffer_entrada); // Limite de 19 caracteres
+            limpar_buffer();
+            if (strcmp(buffer_entrada, "0") == 0) {
+                printf("Adição de aluno cancelada.\n");
+                return;
+            }
+            strcpy(ra, buffer_entrada);
             
             // Verifica se o aluno já está na turma
             for (int k = 0; k < turmas[i].totalAlunos; k++) {
@@ -144,6 +185,7 @@ void adicionarAlunoTurma(Turma turmas[], int qtd) {
     }
     printf("Turma não encontrada.\n");
 }
+
 // AQUI: ADICIONE A NOVA FUNÇÃO DE ACESSO DO ALUNO
 void listarTurmasAluno(const char *alunoRA) {
     Turma turmas[MAX_TURMAS];
@@ -174,7 +216,7 @@ void listarTurmasAluno(const char *alunoRA) {
     }
 }
 
-// FUNÇÃO CORRIGIDA: Adicionada limpeza de buffer.
+// FUNÇÃO CORRIGIDA: Adicionada validação de opções inválidas.
 void menuTurmas(const char *professorRA) {
     Turma turmas[MAX_TURMAS];
     int qtd = carregarTurmas(turmas);
@@ -193,6 +235,10 @@ void menuTurmas(const char *professorRA) {
             case 1: criarTurma(turmas, &qtd, professorRA); break;
             case 2: listarTurmas(turmas, qtd); break;
             case 3: adicionarAlunoTurma(turmas, qtd); break;
+            case 4: break; // Opção de sair
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+                break;
         }
     } while (opcao != 4);
 
