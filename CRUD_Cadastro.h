@@ -1,44 +1,42 @@
 #ifndef CRUD_CADASTRO_H
 #define CRUD_CADASTRO_H
 
-// Constantes de Limite e Arquivo
+// Definições de constantes (ajuste MAX conforme o limite desejado)
 #define MAX 50
 #define ARQ_ALUNOS "alunos.txt"
 #define ARQ_PROFESSORES "professores.txt"
 
-// Estrutura de Dados (Usada para Aluno e Professor)
+// Estrutura de dados (Registro é usado tanto para Aluno quanto Professor)
 typedef struct {
     char ra[20];
     char nome[50];
-    char cpf[15];       // 14 caracteres é suficiente para CPF formatado (000.000.000-00\0)
-    char telefone[20];  // 15 caracteres para (99) 99999-9999\0
+    char cpf[20];
+    char telefone[20];
     char email[50];
     char senha[20];
 } Registro;
 
-// Protótipo da função de utilidade (implementada no Main.c)
-void limpar_buffer();
+// --- Protótipos das Funções ---
 
-// Protótipos das Funções Auxiliares de Arquivo
+// Funções Auxiliares de Arquivo
 void salvar(Registro lista[], int qtd, const char *arquivo);
 int carregar(Registro lista[], const char *arquivo);
 
-// Protótipos das Funções de Validação
+// Validações
 int existeRA(Registro lista[], int qtd, const char *ra);
 int validarTelefone(const char *telefone);
 
-// Protótipos das Funções de Cadastro e Login
+// Cadastro & Login
 void cadastrar(Registro lista[], int *qtd, const char *arquivo);
 int login(const char *arquivo, const char *tipo, char *usuarioRA);
 
-// Protótipos das Funções CRUD
+// Funções CRUD (Acessíveis pelo Professor)
 void listarAlunos();
-void buscarAluno();
 void alterarCadastro(const char *arquivo, const char *usuarioRA);
 void apagarConta(const char *arquivo, const char *usuarioRA);
 void apagarAluno();
 
-// Protótipos das Funções de Menu (que fazem interface entre os módulos)
+// Menus
 void menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA);
 void menuCadastroLogin(const char *arquivo, const char *tipo);
 

@@ -8,6 +8,7 @@
         "crud_cadastro.h": "c",
         "CRUD_Aulas.C": "cpp",
         "crud_turmas.h": "c",
-        "CRUD_AULAS.H": "cpp"
+        "CRUD_AULAS.H": "cpp",
+        "crud_atividades.h": "c"
     }
 }

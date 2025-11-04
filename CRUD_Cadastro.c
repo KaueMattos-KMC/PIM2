@@ -5,6 +5,7 @@
 #include <ctype.h> // Para strcspn, se necessário na função carregar
 
 // Função auxiliar para limpar o buffer de entrada (protótipo deve estar em um .h)
+// A implementação real deve estar no Main.c para evitar "multiple definition"
 extern void limpar_buffer(); 
 
 // ---------- Funções Auxiliares ----------
@@ -98,6 +99,7 @@ int validarTelefone(const char *telefone) {
 
 // ---------- Cadastro & Login ----------
 
+// FUNÇÃO ATUALIZADA com Fluxo de Cancelamento
 void cadastrar(Registro lista[], int *qtd, const char *arquivo) {
     if (*qtd >= MAX) {
         printf("Limite de cadastros atingido.\n");
@@ -105,43 +107,87 @@ void cadastrar(Registro lista[], int *qtd, const char *arquivo) {
     }
     
     Registro r;
+    char buffer_entrada[50]; // Buffer para cancelamento
+
+    printf("\n--- Novo Cadastro ---\n");
+
+    // 1. RA
     printf("RA (Max 19): ");
-    scanf(" %19[^\n]", r.ra);
+    scanf(" %19[^\n]", buffer_entrada);
     limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Cadastro cancelado.\n");
+        return;
+    }
+    strcpy(r.ra, buffer_entrada);
 
     if (existeRA(lista, *qtd, r.ra)) {
         printf("Erro: já existe um cadastro com esse RA!\n");
         return;
     }
 
+    // 2. Nome
     printf("Nome e Sobrenome (Max 49): ");
-    scanf(" %49[^\n]", r.nome);
+    scanf(" %49[^\n]", buffer_entrada);
     limpar_buffer();
-    printf("CPF (Max 14): ");
-    scanf(" %14[^\n]", r.cpf);
-    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Cadastro cancelado.\n");
+        return;
+    }
+    strcpy(r.nome, buffer_entrada);
 
+    // 3. CPF
+    printf("CPF (Max 14): ");
+    scanf(" %14[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Cadastro cancelado.\n");
+        return;
+    }
+    strcpy(r.cpf, buffer_entrada);
+
+    // 4. Telefone (com loop de validação)
     do {
         printf("Telefone (Max 15): ");
-        scanf(" %15[^\n]", r.telefone);
+        scanf(" %15[^\n]", buffer_entrada);
         limpar_buffer();
-        if (!validarTelefone(r.telefone)) {
+        if (strcmp(buffer_entrada, "0") == 0) {
+            printf("Cadastro cancelado.\n");
+            return;
+        }
+        if (!validarTelefone(buffer_entrada)) {
             printf("Formato inválido! Tente novamente.\n");
         }
-    } while (!validarTelefone(r.telefone));
+    } while (!validarTelefone(buffer_entrada));
+    strcpy(r.telefone, buffer_entrada);
 
+    // 5. E-mail
     printf("E-mail (Max 49): ");
-    scanf(" %49[^\n]", r.email);
+    scanf(" %49[^\n]", buffer_entrada);
     limpar_buffer();
-    printf("Senha (Max 19): ");
-    scanf(" %19[^\n]", r.senha);
-    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Cadastro cancelado.\n");
+        return;
+    }
+    strcpy(r.email, buffer_entrada);
 
+    // 6. Senha
+    printf("Senha (Max 19): ");
+    scanf(" %19[^\n]", buffer_entrada);
+    limpar_buffer();
+    if (strcmp(buffer_entrada, "0") == 0) {
+        printf("Cadastro cancelado.\n");
+        return;
+    }
+    strcpy(r.senha, buffer_entrada);
+
+    // Salva o registro se chegou até aqui
     lista[*qtd] = r;
     (*qtd)++;
     salvar(lista, *qtd, arquivo);
     printf("Cadastro realizado com sucesso!\n");
 }
+
 
 int login(const char *arquivo, const char *tipo, char *usuarioRA) {
     Registro lista[MAX];
@@ -181,37 +227,15 @@ void listarAlunos() {
     printf("\n--- Lista de Alunos ---\n");
     for (int i = 0; i < qtd; i++) {
         printf("%s - %s - %s - %s - %s\n",
-               lista[i].ra,
-               lista[i].nome,
-               lista[i].cpf,
-               lista[i].telefone,
-               lista[i].email);
+                lista[i].ra,
+                lista[i].nome,
+                lista[i].cpf,
+                lista[i].telefone,
+                lista[i].email);
     }
 }
 
-void buscarAluno() {
-    Registro lista[MAX];
-    int qtd = carregar(lista, ARQ_ALUNOS);
-    char ra[20];
-    printf("Digite o RA do aluno: ");
-    scanf(" %19[^\n]", ra); 
-    limpar_buffer();
 
-    for (int i = 0; i < qtd; i++) {
-        if (strcmp(lista[i].ra, ra) == 0) {
-            printf("Encontrado: %s - %s - %s - %s - %s\n",
-                   lista[i].ra,
-                   lista[i].nome,
-                   lista[i].cpf,
-                   lista[i].telefone,
-                   lista[i].email);
-            return;
-        }
-    }
-    printf("Aluno não encontrado.\n");
-}
-
-// FUNÇÃO ATUALIZADA com Fluxo de Cancelamento
 void alterarCadastro(const char *arquivo, const char *usuarioRA) {
     Registro lista[MAX];
     int qtd = carregar(lista, arquivo);
@@ -230,10 +254,9 @@ void alterarCadastro(const char *arquivo, const char *usuarioRA) {
         printf("RA não encontrado.\n");
         return;
     }
-
+    
     printf("Alterando cadastro de %s\n", lista[i].nome);
-   
-
+    
     char novo_nome[50];
     printf("Novo nome (Max 49): ");
     scanf(" %49[^\n]", novo_nome);
@@ -244,7 +267,7 @@ void alterarCadastro(const char *arquivo, const char *usuarioRA) {
     }
     strcpy(lista[i].nome, novo_nome);
 
-    char novo_telefone[20]; // Aumentado para 20
+    char novo_telefone[20];
     do {
         printf("Novo telefone (Max 15): ");
         scanf(" %15[^\n]", novo_telefone);
@@ -279,7 +302,6 @@ void alterarCadastro(const char *arquivo, const char *usuarioRA) {
     }
     strcpy(lista[i].senha, nova_senha);
     
-    // Se chegou até aqui sem cancelar, salva as alterações
     salvar(lista, qtd, arquivo);
     printf("Cadastro atualizado com sucesso!\n");
 }
@@ -323,9 +345,15 @@ void apagarAluno() {
     Registro lista[MAX];
     int qtd = carregar(lista, ARQ_ALUNOS);
     char ra[20];
+    
     printf("Digite o RA do aluno a excluir: ");
     scanf(" %19[^\n]", ra); 
     limpar_buffer();
+
+    if (strcmp(ra, "0") == 0) {
+        printf("Exclusão de aluno cancelada.\n");
+        return;
+    }
 
     int pos = -1;
     for (int i = 0; i < qtd; i++) {
@@ -354,15 +382,13 @@ void menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA) {
     do {
         printf("\n--- Menu ---\n");
         printf("1. Alterar Cadastro\n");
-      
+        
         if (strcmp(tipo, "Professor") == 0) {
             printf("2. Listar Alunos\n");
-            printf("3. Buscar Aluno\n");
-            printf("4. Apagar Aluno\n");
-            printf("5. Apagar Minha Conta\n"); 
-            printf("6. Voltar\n");
+            printf("3. Apagar Aluno\n"); 
+            printf("4. Apagar Minha Conta\n"); 
+            printf("5. Voltar\n"); // 
         } else { // Aluno
-            // Opção "Apagar Minha Conta" removida daqui, pois já está no Menu Principal do Aluno
             printf("2. Voltar\n"); 
         }
 
@@ -376,15 +402,15 @@ void menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA) {
         } else if (strcmp(tipo, "Professor") == 0) {
             switch (opcao) {
                 case 2: listarAlunos(); break;
-                case 3: buscarAluno(); break;
-                case 4: apagarAluno(); break;
-                case 5: apagarConta(arquivo, usuarioRA); break; 
+                // case 3: (Removido)
+                case 3: apagarAluno(); break; // Antiga opção 4
+                case 4: apagarConta(arquivo, usuarioRA); break; // Antiga opção 5
                 default:
-                    // Se não for 1, 2, 3, 4, 5 e não for 6 (Voltar)
-                    if (opcao != 6) printf("Opção inválida. Tente novamente.\n");
+                    // Se não for 1, 2, 3, 4 e não for 5 (Voltar)
+                    if (opcao != 5) printf("Opção inválida. Tente novamente.\n");
                     break;
             }
-            if(opcao == 5) break; // Sai do menu se apagou a conta
+            if(opcao == 4) break; // Sai do menu se apagou a conta (Antiga opção 5)
         } else { // Aluno
             // Opções do Aluno: 1 (Alterar), 2 (Voltar)
              if (opcao != 1 && opcao != 2) {
@@ -392,7 +418,7 @@ void menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA) {
             }
         }
         
-    } while ((strcmp(tipo, "Professor") == 0 && opcao != 6 && opcao != 5) || // Condição de saída para Professor
+    } while ((strcmp(tipo, "Professor") == 0 && opcao != 5 && opcao != 4) || // Condição de saída para Professor
              (strcmp(tipo, "Aluno") == 0 && opcao != 2)); // Condição de saída para Aluno (Opção 2 = Voltar)
 }
 
@@ -416,9 +442,9 @@ void menuCadastroLogin(const char *arquivo, const char *tipo) {
             case 1: cadastrar(lista, &qtd, arquivo); break;
             case 2: logado = login(arquivo, tipo, usuarioRA); break;
             default:
-                 // Validação de opção inválida
-                 if (opcao != 3) printf("Opção inválida. Tente novamente.\n");
-                 break;
+                // Validação de opção inválida
+                if (opcao != 3) printf("Opção inválida. Tente novamente.\n");
+                break;
         }
 
         if (logado) {
