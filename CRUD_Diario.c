@@ -90,7 +90,6 @@ void lancarNota(const char *professorRA) {
     printf("\n--- Suas Atividades Abertas ---\n");
     for (int i = 0; i < qtd_atividades; i++) {
         if (strcmp(atividades[i].professorRA, professorRA) == 0) {
-            // REMOVIDO: Título/Tipo (para manter a compatibilidade com a remoção do campo)
             printf(" ID: %s | Turma: %s | Matéria: %s\n", 
                    atividades[i].id, atividades[i].turmaCodigo, atividades[i].materia);
         }
