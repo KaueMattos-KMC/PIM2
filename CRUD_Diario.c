@@ -76,7 +76,6 @@ void lancarNota(const char *professorRA) {
     int qtd_notas = carregarNotas(notas);
     Atividade atividades[MAX_ATIVIDADES];
     int qtd_atividades = carregarAtividades(atividades);
-
     Turma turmas[MAX_TURMAS];
     int qtd_turmas = carregarTurmas(turmas);
 
