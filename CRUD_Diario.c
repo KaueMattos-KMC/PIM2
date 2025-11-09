@@ -74,7 +74,6 @@ void salvarFrequencias(Frequencia frequencias[], int qtd) {
 void lancarNota(const char *professorRA) {
     Nota notas[MAX_NOTAS];
     int qtd_notas = carregarNotas(notas);
-
     Atividade atividades[MAX_ATIVIDADES];
     int qtd_atividades = carregarAtividades(atividades);
 
