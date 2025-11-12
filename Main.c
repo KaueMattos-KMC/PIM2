@@ -72,8 +72,8 @@ int main() {
                     printf("2. Ver Minhas Turmas\n"); 
                     printf("3. Ver Atividades\n"); 
                     printf("4. Consultar Desempenho (Notas/Faltas)\n"); 
-                    printf("5. Apagar Minha Conta\n");
-                    printf("6. Voltar\n");
+                    printf("5. Apagar Minha Conta\n"); 
+                    printf("6. Voltar\n"); 
                     printf("Escolha: ");
                     scanf("%d", &escolha_aluno);
                     limpar_buffer();
@@ -81,17 +81,18 @@ int main() {
                     switch (escolha_aluno) {
                         case 1: menuInterno("Aluno", ARQ_ALUNOS, usuarioRA); break;
                         case 2: listarTurmasAluno(usuarioRA); break; 
+                        // case 3: listarAulasAluno(usuarioRA); break; // REMOVIDO
                         case 3: listarAtividadesAluno(usuarioRA); break; 
-                        case 4: consultarDesempenho(usuarioRA); break; 
+                        case 4: consultarDesempenho(usuarioRA); break;
                         case 5: apagarConta(ARQ_ALUNOS, usuarioRA); break; 
                         default:
-                            if (escolha_aluno != 6) { 
+                            if (escolha_aluno != 6) {
                                 printf("Opção inválida. Tente novamente.\n");
                             }
                             break;
                     }
-                    if (escolha_aluno == 5) break; 
-                } while (escolha_aluno != 6); 
+                    if (escolha_aluno == 5) break; // Sai se a conta foi apagada
+                } while (escolha_aluno != 6);
             }
         } 
         else if(opcao == 2) { // MENU PROFESSOR
@@ -102,28 +103,36 @@ int main() {
                     printf("\n--- Menu Professor ---\n");
                     printf("1. Gerenciar Cadastro\n");
                     printf("2. Gerenciar Turmas\n");
-                    printf("3. Gerenciar Atividades\n"); 
+                    printf("3. Gerenciar Atividades\n");
                     printf("4. Diário Eletrônico (Notas/Faltas)\n"); 
-                    printf("5. Voltar\n"); 
+                    printf("5. Voltar\n");
                     printf("Escolha: ");
                     scanf("%d", &escolha);
                     limpar_buffer(); 
                     
-                    switch (escolha) {
-                        case 1: menuInterno("Professor", ARQ_PROFESSORES, usuarioRA); break;
-                        case 2: menuTurmas(usuarioRA); break; 
-                        case 3: menuAtividades(usuarioRA); break; 
-                        case 4: menuDiario(usuarioRA); break; 
-                        default:
-                            if (escolha != 5) { 
-                                printf("Opção inválida. Tente novamente.\n");
-                            }
-                            break;
+                    if(escolha == 1) {
+                     
+                        int status = menuInterno("Professor", ARQ_PROFESSORES, usuarioRA);
+                        if (status == 0) {
+                            break; 
+                        }
                     }
-                } while(escolha != 5); 
+                    else if(escolha == 2) {
+                        menuTurmas(usuarioRA); 
+                    }
+                    else if(escolha == 3) { 
+                        menuAtividades(usuarioRA); 
+                    }
+                    else if(escolha == 4) { 
+                        menuDiario(usuarioRA); 
+                    }
+                    else if (escolha != 5) { // Validação
+                         printf("Opção inválida. Tente novamente.\n");
+                    }
+                } while(escolha != 5);
             }
         } else if (opcao != 3) {
-            printf("Opção inválida. Tente novamente.\n");
+             printf("Opção inválida. Tente novamente.\n");
         }
 
     } while (opcao != 3);

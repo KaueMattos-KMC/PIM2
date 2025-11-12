@@ -37,7 +37,7 @@ void apagarConta(const char *arquivo, const char *usuarioRA);
 void apagarAluno();
 
 // Menus
-void menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA);
+int menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA);
 void menuCadastroLogin(const char *arquivo, const char *tipo);
 
 #endif // CRUD_CADASTRO_H

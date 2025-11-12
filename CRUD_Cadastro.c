@@ -5,7 +5,6 @@
 #include <ctype.h> // Para strcspn, se necessário na função carregar
 
 // Função auxiliar para limpar o buffer de entrada (protótipo deve estar em um .h)
-// A implementação real deve estar no Main.c para evitar "multiple definition"
 extern void limpar_buffer(); 
 
 // ---------- Funções Auxiliares ----------
@@ -110,6 +109,7 @@ void cadastrar(Registro lista[], int *qtd, const char *arquivo) {
     char buffer_entrada[50]; // Buffer para cancelamento
 
     printf("\n--- Novo Cadastro ---\n");
+    printf("(Digite 0 a qualquer momento para cancelar)\n");
 
     // 1. RA
     printf("RA (Max 19): ");
@@ -240,9 +240,8 @@ void alterarCadastro(const char *arquivo, const char *usuarioRA) {
     Registro lista[MAX];
     int qtd = carregar(lista, arquivo);
     int encontrado = 0;
-    int i; // Índice do registro a ser alterado
+    int i; 
 
-    // Encontra o índice do usuário a ser alterado
     for (i = 0; i < qtd; i++) {
         if (strcmp(lista[i].ra, usuarioRA) == 0) {
             encontrado = 1;
@@ -255,6 +254,7 @@ void alterarCadastro(const char *arquivo, const char *usuarioRA) {
         return;
     }
     
+    printf("\n(Digite 0 a qualquer momento para cancelar)\n");
     printf("Alterando cadastro de %s\n", lista[i].nome);
     
     char novo_nome[50];
@@ -339,6 +339,7 @@ void apagarConta(const char *arquivo, const char *usuarioRA) {
     qtd--;
     salvar(lista, qtd, arquivo);
     printf("Sua conta foi apagada com sucesso!\n");
+    
 }
 
 void apagarAluno() {
@@ -346,6 +347,7 @@ void apagarAluno() {
     int qtd = carregar(lista, ARQ_ALUNOS);
     char ra[20];
     
+    printf("\n(Digite 0 para cancelar a operação)\n");
     printf("Digite o RA do aluno a excluir: ");
     scanf(" %19[^\n]", ra); 
     limpar_buffer();
@@ -377,7 +379,8 @@ void apagarAluno() {
 
 // ---------- Menus ----------
 
-void menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA) {
+// CORREÇÃO: Função agora retorna int
+int menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA) {
     int opcao;
     do {
         printf("\n--- Menu ---\n");
@@ -387,7 +390,7 @@ void menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA) {
             printf("2. Listar Alunos\n");
             printf("3. Apagar Aluno\n"); 
             printf("4. Apagar Minha Conta\n"); 
-            printf("5. Voltar\n"); // 
+            printf("5. Voltar\n"); 
         } else { // Aluno
             printf("2. Voltar\n"); 
         }
@@ -402,24 +405,24 @@ void menuInterno(const char *tipo, const char *arquivo, const char *usuarioRA) {
         } else if (strcmp(tipo, "Professor") == 0) {
             switch (opcao) {
                 case 2: listarAlunos(); break;
-                // case 3: (Removido)
-                case 3: apagarAluno(); break; // Antiga opção 4
-                case 4: apagarConta(arquivo, usuarioRA); break; // Antiga opção 5
+                case 3: apagarAluno(); break; 
+                case 4: 
+                    apagarConta(arquivo, usuarioRA); 
+                    return 0; // CORREÇÃO: Retorna 0 para sinalizar logout
                 default:
-                    // Se não for 1, 2, 3, 4 e não for 5 (Voltar)
                     if (opcao != 5) printf("Opção inválida. Tente novamente.\n");
                     break;
             }
-            if(opcao == 4) break; // Sai do menu se apagou a conta (Antiga opção 5)
         } else { // Aluno
-            // Opções do Aluno: 1 (Alterar), 2 (Voltar)
              if (opcao != 1 && opcao != 2) {
                  printf("Opção inválida. Tente novamente.\n");
             }
         }
         
-    } while ((strcmp(tipo, "Professor") == 0 && opcao != 5 && opcao != 4) || // Condição de saída para Professor
-             (strcmp(tipo, "Aluno") == 0 && opcao != 2)); // Condição de saída para Aluno (Opção 2 = Voltar)
+    } while ((strcmp(tipo, "Professor") == 0 && opcao != 5) || // Professor sai com 5
+             (strcmp(tipo, "Aluno") == 0 && opcao != 2)); // Aluno sai com 2
+             
+    return 1; // Retorna 1 se o usuário apenas "Voltou"
 }
 
 
@@ -442,15 +445,17 @@ void menuCadastroLogin(const char *arquivo, const char *tipo) {
             case 1: cadastrar(lista, &qtd, arquivo); break;
             case 2: logado = login(arquivo, tipo, usuarioRA); break;
             default:
-                // Validação de opção inválida
                 if (opcao != 3) printf("Opção inválida. Tente novamente.\n");
                 break;
         }
 
         if (logado) {
-            menuInterno(tipo, arquivo, usuarioRA);
+     
+         
+            menuInterno(tipo, arquivo, usuarioRA); 
             logado = 0; 
         }
 
     } while (opcao != 3);
 }
+
